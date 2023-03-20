@@ -18,7 +18,7 @@ Ingredient.propTypes = {
     name: PropTypes.string.isRequired,
     image: PropTypes.string.isRequired,
     price: PropTypes.number.isRequired,
-  }),
+  }).isRequired,
 };
 
 export default Ingredient;

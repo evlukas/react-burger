@@ -37,3 +37,8 @@ header svg {
     flex-grow: 0.5;
     composes: headerItem;
 }
+
+.link {
+    color: inherit;
+    text-decoration: none;
+}

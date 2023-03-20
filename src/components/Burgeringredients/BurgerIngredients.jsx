@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import PropTypes from 'prop-types';
+import React, { useState, useMemo } from "react";
+import { bun, main, sauce } from "../../utils/constant";
 import cls from "./BurgerIngredients.module.css";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import ListIngredients from "../ListIngredients/ListIngredients";
@@ -7,10 +7,14 @@ import data from "../../utils/data";
 
 function BurgerIngredients() {
   const [current, setCurrent] = useState("one");
-
-  const buns = data.filter((ingredient) => ingredient.type === "bun");
-  const meals = data.filter((ingredient) => ingredient.type === "main");
-  const sauces = data.filter((ingredient) => ingredient.type === "sauce");
+ 
+  const {meals, sauces, buns} = useMemo( () => {
+    return {
+      meals: data.filter((ingredient) => ingredient.type === main),
+      sauces: data.filter((ingredient) => ingredient.type === sauce),
+      buns: data.filter((ingredient) => ingredient.type === bun) 
+    }
+}, [data]);
 
   return (
     <section className={cls.burgerIngredients}>

@@ -12,19 +12,25 @@ function AppHeader() {
     <header className={cls.header}>
       <ul className={cls.headerTopMenu}>
         <li className={cls.headerItem}>
-          <BurgerIcon type="primary" />
-          <span className="pl-2 pr-2">Конструктор</span>
+          <a className={cls.link} href="#">
+            <BurgerIcon type="primary" />
+            <span className="pl-2 pr-2">Конструктор</span>
+          </a>
         </li>
         <li className={cls.headerItem}>
-          <ListIcon type="primary" />
-          <span className="pl-2">Лента заказов</span>
+          <a className={cls.link} href="">
+            <ListIcon type="primary" />
+            <span className="pl-2">Лента заказов</span>
+          </a>
         </li>
         <li className={cls.headerLogo}>
           <Logo />
         </li>
         <li className={cls.headerItem}>
-          <ProfileIcon type="primary" />
-          <span className="pl-2">Личный кабинет</span>
+          <a className={cls.link} href="">
+            <ProfileIcon type="primary" />
+            <span className="pl-2">Личный кабинет</span>
+          </a>
         </li>
       </ul>
     </header>
