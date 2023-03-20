@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import {
     ConstructorElement,
     DragIcon,
@@ -17,5 +18,11 @@ function BurgerInnerList({name, price, image}) {
     </li>
   );
 }
+
+BurgerInnerList.propTypes = {
+  name: PropTypes.string.isRequired,
+  price: PropTypes.number.isRequired,
+  image: PropTypes.string.isRequired,  
+};
 
 export default BurgerInnerList;

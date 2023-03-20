@@ -1,5 +1,6 @@
 import {CurrencyIcon, Counter} from "@ya.praktikum/react-developer-burger-ui-components";
 import cls from "./Ingredient.module.css";
+import PropTypes from 'prop-types';
 
 function Ingredient({ingr}) {
   return (
@@ -11,5 +12,13 @@ function Ingredient({ingr}) {
     </li>
   );
 }
+
+Ingredient.propTypes = {
+  ingr: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    image: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+  }),
+};
 
 export default Ingredient;
