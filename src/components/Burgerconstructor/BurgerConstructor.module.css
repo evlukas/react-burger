@@ -1,0 +1,55 @@
+.burgerConstructor {
+   composes: mt-25 ml-9 mb-10 from global;
+
+   align-items: center;
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+
+   flex-shrink: 0;
+   overflow: hidden;
+}
+
+
+.listBurgerIngr {
+   align-items: center;
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+   padding-left: 0;
+   margin: 0;
+   height: 350px;
+   overflow-y: scroll;
+   composes: pr-5 from global;
+}
+
+.listBurgerIngr::-webkit-scrollbar {
+   width: 7px;
+   background-color: #131316;
+}
+
+.listBurgerIngr::-webkit-scrollbar-thumb {
+   background-color: #8585AD;
+}
+
+.totalPrice {
+   composes: mr-2 text text_type_digits-medium from global;
+}
+
+.totalPriceWrap {
+   display: flex;
+   composes: mr-10 from global;
+}
+
+.totalPriceWrap svg {
+   width: 32px;
+   height: 35px;
+}
+
+.placeOrderWrap {
+   composes: mt-10 pr-7 from global;
+   display: flex;
+   align-items: center;
+   flex-direction: row-reverse;
+   align-self: flex-end;
+}
