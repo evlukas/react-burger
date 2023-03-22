@@ -1,0 +1,11 @@
+.wrapDrag {
+    display: flex;
+    align-items: center;
+    width: 100%;    
+ }
+
+.wrapDrag svg {
+    margin-right: 4px;
+    cursor: pointer;
+ }
+ 
