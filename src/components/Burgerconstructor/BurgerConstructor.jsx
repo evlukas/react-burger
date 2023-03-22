@@ -9,13 +9,18 @@ import cls from "./BurgerConstructor.module.css";
 import BurgerInnerList from "../BurgerInnerList/BurgerInnerList";
 
 function BurgerConstructor() {
+
+  const bunPrice = data[0].price;
+
   const dataBurgerInner = useMemo(
     () => data.filter((item) => item.type !== "bun"),
     [data]
   );
 
-  const bunPrice = data[0].price;
-  let totalPrice = bunPrice;
+  const totalPrice = useMemo(() => {
+    const ingrPrice = dataBurgerInner.reduce((sum, currentIngr) => sum + currentIngr.price, 0);
+    return bunPrice * 2 + ingrPrice
+  }, [data]);
 
   return (
     <section className={cls.burgerConstructor}>
@@ -29,7 +34,6 @@ function BurgerConstructor() {
 
       <ul className={cls.listBurgerIngr}>
         {dataBurgerInner.map((item) => {
-          totalPrice += item.price;
           return (
             <BurgerInnerList
               key={item._id}
