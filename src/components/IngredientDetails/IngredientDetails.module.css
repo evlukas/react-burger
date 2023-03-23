@@ -1,0 +1,37 @@
+.ingredientCard {
+    text-align: center;
+    composes: pt-10 pb-15 from global;
+}
+
+.header {
+    composes: pl-10 text text_type_main-large from global;
+    text-align: left;
+}
+
+.ingrDesc {
+    composes: pt-4 pb-8 text text_type_main-medium from global;
+}
+
+.listCalories {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    composes:  text text_type_main-default from global;
+    color: #8585AD;
+}
+
+.listCalories li {
+    padding: 0;
+}
+
+.listCalories li span {
+    display: block;
+    font-family: 'Iceland';
+    font-weight: normal;
+    font-size: 28px;
+    line-height: .86;
+    margin-top: 8px;
+}
