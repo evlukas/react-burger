@@ -5,7 +5,7 @@ import cls from "./Modal.module.css";
 import ModalOverlay from "../ModalOverlay/ModalOverlay";
 
 function Modal({ children, setModalVisible }) {
-  const modalApp = document.getElementById("App");
+  const modalApp = document.getElementById("react-modals");
 
   const closeEscapeHandle = (event) => {
     if (event.key === "Escape") {
@@ -15,10 +15,10 @@ function Modal({ children, setModalVisible }) {
 
   useEffect(() => {
     document.addEventListener("keydown", closeEscapeHandle);
+    return () => document.removeEventListener("keydown", closeEscapeHandle);
   }, []);
 
   const closeModalHandler = () => {
-    document.removeEventListener("keydown", closeEscapeHandle);
     setModalVisible(false);
   };
 

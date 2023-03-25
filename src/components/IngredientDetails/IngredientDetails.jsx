@@ -19,7 +19,7 @@ function IngredientDetails({ingr}) {
 }
 
 IngredientDetails.propTypes = {
-  ingredients: PropTypes.arrayOf(ingrType.isRequired)
+  ingr: PropTypes.shape(ingrType.isRequired).isRequired
 };
 
 
