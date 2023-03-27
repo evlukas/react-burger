@@ -1,20 +1,21 @@
 import React, { useState, useMemo } from "react";
+import PropTypes from 'prop-types';
+import ingrType from "../../utils/ingrType";
 import { bun, main, sauce } from "../../utils/constant";
 import cls from "./BurgerIngredients.module.css";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import ListIngredients from "../ListIngredients/ListIngredients";
-import data from "../../utils/data";
 
-function BurgerIngredients() {
-  const [current, setCurrent] = useState("one");
- 
+function BurgerIngredients({burgerIngredients}) {
+
+  const [current, setCurrent] = useState("one"); 
   const {meals, sauces, buns} = useMemo( () => {
     return {
-      meals: data.filter((ingredient) => ingredient.type === main),
-      sauces: data.filter((ingredient) => ingredient.type === sauce),
-      buns: data.filter((ingredient) => ingredient.type === bun) 
+      meals: burgerIngredients.filter((ingredient) => ingredient.type === main),
+      sauces: burgerIngredients.filter((ingredient) => ingredient.type === sauce),
+      buns: burgerIngredients.filter((ingredient) => ingredient.type === bun) 
     }
-}, [data]);
+}, [burgerIngredients]);
 
   return (
     <section className={cls.burgerIngredients}>
@@ -39,5 +40,9 @@ function BurgerIngredients() {
     </section>
   );
 }
+
+BurgerIngredients.propTypes = {
+  burgerIngredients: PropTypes.arrayOf(ingrType.isRequired).isRequired
+};
 
 export default BurgerIngredients;
