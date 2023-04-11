@@ -1,5 +1,4 @@
-import React, { useMemo, useState } from "react";
-import data from "../../utils/data";
+import React, { useState, useMemo, useContext } from "react";
 import {
   ConstructorElement,
   Button,
@@ -9,34 +8,67 @@ import cls from "./BurgerConstructor.module.css";
 import BurgerInnerList from "../BurgerInnerList/BurgerInnerList";
 import Modal from "../Modal/Modal";
 import OrderDetails from "../OrderDetails/OrderDetails";
+import { IngredientsContext } from "../../context/burgerContext";
+import { api } from "../../Api/Api";
+import Spiner from "../spiners/Spiner";
 
 function BurgerConstructor() {
+  const burgerIngredients = useContext(IngredientsContext);
 
   const [modalVisible, setModalVisible] = useState(false);
-  const openModalIngrHandle = () => {
-    setModalVisible(true);
+  const [orderdetails, setOrderdetails] = useState({
+    orderData: {},
+    loading: false,
+    error: "",
+  });
+
+  const makeOrderBtnHandle = () => {
+    setOrderdetails((prevState) => ({ ...prevState, loading: true }));
+    api
+      .createOrder(ingredientsId)
+      .then((data) => {
+        setOrderdetails((prevState) => ({
+          ...prevState,
+          loading: false,
+          orderData: data,
+        }));
+        setModalVisible(true);
+      })
+      .catch(
+        (error) => setOrderdetails((prevState) => ({
+          ...prevState,
+          loading: false,
+          error: error,
+        }))
+      );
   };
 
-  const bunPrice = data[0].price;
-  const dataBurgerInner = useMemo(
-    () => data.filter((item) => item.type !== "bun"),
-    [data]
-  );
+  const { bun, dataBurgerInner, ingredientsId } = useMemo(() => {
+    return {
+      bun: burgerIngredients.find((item) => item.type === "bun"),
+      dataBurgerInner: burgerIngredients.filter((item) => item.type !== "bun"),
+      ingredientsId: burgerIngredients.map((item) => item._id),
+    };
+  }, [burgerIngredients]);
+
+  const bunPrice = bun?.price || 0;
 
   const totalPrice = useMemo(() => {
-    const ingrPrice = dataBurgerInner.reduce((sum, currentIngr) => sum + currentIngr.price, 0);
-    return bunPrice * 2 + ingrPrice
-  }, [data]);
-
+    const ingrPrice = dataBurgerInner.reduce(
+      (sum, currentIngr) => sum + currentIngr.price,
+      0
+    );
+    return bunPrice * 2 + ingrPrice;
+  }, [burgerIngredients]);
 
   return (
     <section className={cls.burgerConstructor}>
       <ConstructorElement
         type="top"
         isLocked={true}
-        text="Краторная булка N-200i (верх)"
+        text={`${bun?.name} (верх)`}
         price={bunPrice}
-        thumbnail="https://code.s3.yandex.net/react/code/bun-02-mobile.png"
+        thumbnail={bun?.image_mobile}
       />
 
       <ul className={cls.listBurgerIngr}>
@@ -55,13 +87,17 @@ function BurgerConstructor() {
       <ConstructorElement
         type="bottom"
         isLocked={true}
-        text="Краторная булка N-200i (низ)"
+        text={`${bun?.name} (низ)`}
         price={bunPrice}
-        thumbnail="https://code.s3.yandex.net/react/code/bun-02-mobile.png"
+        thumbnail={bun?.image_mobile}
       />
-
       <div className={cls.placeOrderWrap}>
-        <Button onClick={openModalIngrHandle} htmlType="button" type="primary" size="large">
+        <Button
+          onClick={makeOrderBtnHandle}
+          htmlType="button"
+          type="primary"
+          size="large"
+        >
           Оформить заказ
         </Button>
         <div className={cls.totalPriceWrap}>
@@ -69,12 +105,12 @@ function BurgerConstructor() {
           <CurrencyIcon type="primary" />
         </div>
       </div>
+      {orderdetails.loading && <Spiner />}
       {modalVisible && (
         <Modal setModalVisible={setModalVisible}>
-          <OrderDetails />
+          <OrderDetails orderData={orderdetails.orderData} />
         </Modal>
       )}
-
     </section>
   );
 }
