@@ -19,7 +19,7 @@ function OrderDetails({ orderData }) {
 
 OrderDetails.propTypes = {
   orderData: PropTypes.shape({
-    name: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
     order: PropTypes.objectOf(PropTypes.number).isRequired,
     success: PropTypes.bool.isRequired,
   }).isRequired,

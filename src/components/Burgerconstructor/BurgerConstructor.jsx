@@ -8,9 +8,9 @@ import cls from "./BurgerConstructor.module.css";
 import BurgerInnerList from "../BurgerInnerList/BurgerInnerList";
 import Modal from "../Modal/Modal";
 import OrderDetails from "../OrderDetails/OrderDetails";
-import { IngredientsContext } from "../../context/burgerContext";
-import { api } from "../../Api/Api";
+import { IngredientsContext } from "../../services/burgerContext";
 import Spiner from "../spiners/Spiner";
+import { api } from "../../api/api";
 
 function BurgerConstructor() {
   const burgerIngredients = useContext(IngredientsContext);
@@ -23,6 +23,7 @@ function BurgerConstructor() {
   });
 
   const makeOrderBtnHandle = () => {
+    let ingredientsId = [bun._id, ...dataBurgerInner.map((item) => item._id), bun._id];
     setOrderdetails((prevState) => ({ ...prevState, loading: true }));
     api
       .createOrder(ingredientsId)
@@ -43,11 +44,10 @@ function BurgerConstructor() {
       );
   };
 
-  const { bun, dataBurgerInner, ingredientsId } = useMemo(() => {
+  const { bun, dataBurgerInner } = useMemo(() => {
     return {
       bun: burgerIngredients.find((item) => item.type === "bun"),
       dataBurgerInner: burgerIngredients.filter((item) => item.type !== "bun"),
-      ingredientsId: burgerIngredients.map((item) => item._id),
     };
   }, [burgerIngredients]);
 

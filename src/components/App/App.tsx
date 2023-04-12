@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { api } from "../../Api/Api";
 import AppHeader from "../Appheader/AppHeader";
 import BurgerConstructor from "../Burgerconstructor/BurgerConstructor";
 import BurgerIngredients from "../Burgeringredients/BurgerIngredients";
 import "./App.css";
-import { IngredientsContext } from "../../context/burgerContext";
+import { IngredientsContext } from "../../services/burgerContext";
 import Spiner from "../spiners/Spiner";
+import { api } from "../../api/api";
 
 function App() {
   const [burgerIngredients, setBurgerIngredients] = useState({
@@ -28,17 +28,22 @@ function App() {
       .catch((error) =>
         setBurgerIngredients((prevState) => ({
           ...prevState,
-          loading: false,
           error: true,
         }))
-      );
+      )
+      .finally(() => {
+        setBurgerIngredients((prevState) => ({
+          ...prevState,
+          loading: false,
+        }))
+      });
   }, []);
 
   return (
     <div className="App" id="App">
       <AppHeader />
       <main className="main">
-      {burgerIngredients.loading && <Spiner />}
+        {burgerIngredients.loading && <Spiner />}
         <IngredientsContext.Provider value={burgerIngredients.productData}>
           <BurgerIngredients />
           <BurgerConstructor />

@@ -22,6 +22,10 @@
     composes: pl-5 pr-5 from global;
 }
 
+.headerItem.active {
+    color: #ffffff;
+}
+
 .headerItem:last-child {
     margin-left: auto;
 }

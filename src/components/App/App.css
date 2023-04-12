@@ -7,3 +7,7 @@ body {
     margin: 0 auto; 
     display: flex;
 }
+
+.constructor-element {
+    flex-grow: 0;
+ }
