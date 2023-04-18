@@ -19,29 +19,14 @@ function BurgerConstructor() {
   const [orderdetails, setOrderdetails] = useState({
     orderData: {},
     loading: false,
-    error: "",
   });
 
-  const makeOrderBtnHandle = () => {
+  const makeOrderBtnHandle = async () => {
     let ingredientsId = [bun._id, ...dataBurgerInner.map((item) => item._id), bun._id];
     setOrderdetails((prevState) => ({ ...prevState, loading: true }));
-    api
-      .createOrder(ingredientsId)
-      .then((data) => {
-        setOrderdetails((prevState) => ({
-          ...prevState,
-          loading: false,
-          orderData: data,
-        }));
-        setModalVisible(true);
-      })
-      .catch(
-        (error) => setOrderdetails((prevState) => ({
-          ...prevState,
-          loading: false,
-          error: error,
-        }))
-      );
+    const response = await api.postIngredients(ingredientsId);
+    setOrderdetails((prevState) => ({...prevState, loading: false, orderData: response}));
+    setModalVisible(true);
   };
 
   const { bun, dataBurgerInner } = useMemo(() => {
