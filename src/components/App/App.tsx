@@ -11,32 +11,19 @@ function App() {
   const [burgerIngredients, setBurgerIngredients] = useState({
     productData: [],
     loading: false,
-    error: false,
   });
 
   useEffect(() => {
     setBurgerIngredients((prevState) => ({ ...prevState, loading: true }));
-    api
-      .getIngredients()
-      .then((data) => {
-        setBurgerIngredients((prevState) => ({
-          ...prevState,
-          loading: false,
-          productData: data.data,
-        }));
-      })
-      .catch((error) =>
-        setBurgerIngredients((prevState) => ({
-          ...prevState,
-          error: true,
-        }))
-      )
-      .finally(() => {
-        setBurgerIngredients((prevState) => ({
-          ...prevState,
-          loading: false,
-        }))
-      });
+    async function getIngredients() {
+      const response = await api.fetchIngredients();
+      setBurgerIngredients((prevState) => ({
+        ...prevState,
+        loading: false,
+        productData: response.data,
+      }));
+    }
+    getIngredients();
   }, []);
 
   return (
