@@ -1,6 +1,5 @@
 .burgerConstructor {
    composes: mt-25 ml-9 mb-10 from global;
-
    align-items: center;
    display: flex;
    flex-direction: column;
@@ -18,7 +17,7 @@
    gap: 10px;
    padding-left: 0;
    margin: 0;
-   height: 350px;
+   height: 425px;
    overflow-y: scroll;
    composes: pr-5 from global;
 }
