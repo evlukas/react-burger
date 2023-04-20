@@ -1,26 +1,28 @@
-import React, { useState, useRef, useMemo, useContext } from "react";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 import { bun, main, sauce } from "../../utils/constant";
 import cls from "./BurgerIngredients.module.css";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import ListIngredients from "../ListIngredients/ListIngredients";
-import { IngredientsContext } from "../../services/burgerContext";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchIngredients, selectAllIngredients } from "../../services/slices/BurgeringredientsSlice";
 
 function BurgerIngredients() {
 
-  const burgerIngredients = useContext(IngredientsContext);
+  const dispatch = useDispatch();
+  const burgerIngredients = useSelector(selectAllIngredients);
+
+  useEffect(() => {
+    dispatch(fetchIngredients());
+  }, [dispatch]);
 
   const [current, setCurrent] = useState("one"); 
-
   const refBun = useRef(null);
   const refMain = useRef(null);
   const refSauce = useRef(null);
-
   const handleTabClick = (value, ref) => {
     setCurrent(value);
     ref.current.scrollIntoView({ behavior: "smooth" });
   };
-
-
 
   const {meals, sauces, buns} = useMemo( () => {
     return {

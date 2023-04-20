@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useContext } from "react";
+import React, { useState, useMemo } from "react";
 import {
   ConstructorElement,
   Button,
@@ -8,24 +8,30 @@ import cls from "./BurgerConstructor.module.css";
 import BurgerInnerList from "../BurgerInnerList/BurgerInnerList";
 import Modal from "../Modal/Modal";
 import OrderDetails from "../OrderDetails/OrderDetails";
-import { IngredientsContext } from "../../services/burgerContext";
 import Spiner from "../spiners/Spiner";
-import { api } from "../../api/api";
+import { useDispatch, useSelector } from "react-redux";
+import { selectAllIngredients } from "../../services/slices/BurgeringredientsSlice";
+import {
+  getOrderStatus,
+  selectOrderDetails,
+  sendIngredients,
+  getOrderError,
+} from "../../services/slices/BurgerOrderSlice";
 
 function BurgerConstructor() {
-  const burgerIngredients = useContext(IngredientsContext);
+  const dispatch = useDispatch();
+  const burgerIngredients = useSelector(selectAllIngredients);
+
+  const orderdetails = useSelector(selectOrderDetails);
+  const orderStatus = useSelector(getOrderStatus);
+  const orderError = useSelector(getOrderError);
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [orderdetails, setOrderdetails] = useState({
-    orderData: {},
-    loading: false,
-  });
 
-  const makeOrderBtnHandle = async () => {
-    let ingredientsId = [bun._id, ...dataBurgerInner.map((item) => item._id), bun._id];
-    setOrderdetails((prevState) => ({ ...prevState, loading: true }));
-    const response = await api.postIngredients(ingredientsId);
-    setOrderdetails((prevState) => ({...prevState, loading: false, orderData: response}));
+  const makeOrderBtnHandle = () => {
+    let ingredientsId = [bun._id, ...dataBurgerInner.map((item) => item._id), bun._id ];
+    dispatch(sendIngredients(ingredientsId));
+    console.log(orderStatus);
     setModalVisible(true);
   };
 
@@ -90,12 +96,11 @@ function BurgerConstructor() {
           <CurrencyIcon type="primary" />
         </div>
       </div>
-      {orderdetails.loading && <Spiner />}
-      {modalVisible && (
+      {/* {modalVisible && (
         <Modal setModalVisible={setModalVisible}>
           <OrderDetails orderData={orderdetails.orderData} />
         </Modal>
-      )}
+      )} */}
     </section>
   );
 }
