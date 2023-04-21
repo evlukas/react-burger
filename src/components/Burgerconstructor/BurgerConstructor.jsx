@@ -27,12 +27,19 @@ function BurgerConstructor() {
   const orderError = useSelector(getOrderError);
 
   const [modalVisible, setModalVisible] = useState(false);
+  useMemo(() => {
+    if (orderStatus === "succeeded") {
+      setModalVisible(true);
+    }
+  }, [orderStatus]);
 
   const makeOrderBtnHandle = () => {
-    let ingredientsId = [bun._id, ...dataBurgerInner.map((item) => item._id), bun._id ];
+    let ingredientsId = [
+      bun._id,
+      ...dataBurgerInner.map((item) => item._id),
+      bun._id,
+    ];
     dispatch(sendIngredients(ingredientsId));
-    console.log(orderStatus);
-    setModalVisible(true);
   };
 
   const { bun, dataBurgerInner } = useMemo(() => {
@@ -96,11 +103,13 @@ function BurgerConstructor() {
           <CurrencyIcon type="primary" />
         </div>
       </div>
-      {/* {modalVisible && (
+
+      {orderStatus === "loading" && <Spiner />}
+      {modalVisible && (
         <Modal setModalVisible={setModalVisible}>
-          <OrderDetails orderData={orderdetails.orderData} />
+          <OrderDetails orderData={orderdetails} />
         </Modal>
-      )} */}
+      )}
     </section>
   );
 }

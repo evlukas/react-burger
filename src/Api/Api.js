@@ -14,6 +14,6 @@ export const api = {
   },
   postIngredients: async (data) => {
     const response = await instance.post("/orders", { ingredients: data });
-    return response.data; // Возвращаем полученные данные в формате JSON
+    return response; // Возвращаем полученные данные в формате JSON
   },
 };

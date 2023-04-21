@@ -10,10 +10,12 @@ const initialState = {
 export const sendIngredients = createAsyncThunk(
   "burgerorder/sendIngredients",
   async (data) => {
-    const responce = await api.postIngredients(data);
-    return responce.data;
+    const response = await api.postIngredients(data);
+    return response.data;
   }
 );
+
+
 
 export const BurgerOrderSlice = createSlice({
   name: "burgerorder",
