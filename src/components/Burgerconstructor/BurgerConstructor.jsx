@@ -24,7 +24,6 @@ import {
 import { useDrop } from "react-dnd";
 
 function BurgerConstructor() {
-  ///////////////////////////////////////////////////////
 
   const [{ isHover }, dropTarget] = useDrop({
     accept: "ingredient",
@@ -36,14 +35,9 @@ function BurgerConstructor() {
     },
   });
 
-  //////////////////////////////////////////////////
-  //////////////////////////////////////////////////
-
   const onDropHandler = (itemId) => {
     dispatch(addIngredient(itemId));
   };
-
-  ///////////////////////////////////////////////////////////
 
   const dispatch = useDispatch();
   const burgerIngredients = useSelector(selectAllIngredients);
@@ -85,8 +79,6 @@ function BurgerConstructor() {
     return bunPrice * 2 + ingrPrice;
   }, [burgerIngredients]);
 
-  /////////////////////////////////////////
-
   const onMove = useCallback(
     (dragIndex, hoverIndex) => {
       const dragItem = dataBurgerInner[dragIndex];
@@ -98,7 +90,6 @@ function BurgerConstructor() {
     },
     [dataBurgerInner, dispatch]
   );
-  //////////////////////////////////////////////////////
 
   return (
     <section ref={dropTarget} className={cls.burgerConstructor}>
@@ -112,7 +103,7 @@ function BurgerConstructor() {
 
       <ul className={cls.listBurgerIngr}>
         {dataBurgerInner.length === 0 && (
-          <p>Перетащите сюда ингридиенты из левой секции</p>
+          <p>Перетащите сюда ингредиенты из левой секции</p>
         )}
         {dataBurgerInner.map((item, index) => {
           return (

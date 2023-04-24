@@ -10,8 +10,6 @@ import IngredientDetails from "../IngredientDetails/IngredientDetails";
 import { useDrag } from "react-dnd";
 
 function Ingredient({ ingr }) {
-  
-  //////////////////////////////////////
   const [{ isDragging }, dragRef] = useDrag({
     type: "ingredient",
     item: ingr,
@@ -19,7 +17,6 @@ function Ingredient({ ingr }) {
       isDragging: monitor.isDragging(),
     }),
   });
-  /////////////////////////////////////////////
 
   const [modalVisible, setModalVisible] = useState(false);
   const openModalIngrHandle = () => {

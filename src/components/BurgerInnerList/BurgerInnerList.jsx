@@ -13,8 +13,6 @@ function BurgerInnerList({ name, price, image, innerId, onMove, index }) {
   const dispatch = useDispatch();
   const ref = useRef(null);
 
-  ////////////////////////////////////////
-
   const item = {
     id: innerId,
     index,
@@ -42,8 +40,6 @@ function BurgerInnerList({ name, price, image, innerId, onMove, index }) {
   });
 
   drag(drop(ref));
-
-  /////////////////////////////////////
 
   return (
     <li ref={ref} className={cls.wrapDrag}>
