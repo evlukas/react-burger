@@ -145,7 +145,7 @@ function BurgerConstructor() {
       {orderStatus === "loading" && <Spiner />}
       {modalVisible && (
         <Modal setModalVisible={setModalVisible}>
-          {orderError ? (
+          {orderError || burgerIngredients.length === 1 ? (
             <h1 style={{ padding: 100 }}>
               Что-то пошло не так! Вы уверены, что выбрали ингредиенты?
             </h1>
