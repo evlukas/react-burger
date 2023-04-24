@@ -7,9 +7,20 @@ import cls from "./Ingredient.module.css";
 import PropTypes from "prop-types";
 import Modal from "../Modal/Modal";
 import IngredientDetails from "../IngredientDetails/IngredientDetails";
+import { useDrag } from "react-dnd";
 
 function Ingredient({ ingr }) {
   
+  //////////////////////////////////////
+  const [{ isDragging }, dragRef] = useDrag({
+    type: "ingredient",
+    item: ingr,
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+  /////////////////////////////////////////////
+
   const [modalVisible, setModalVisible] = useState(false);
   const openModalIngrHandle = () => {
     setModalVisible(true);
@@ -17,7 +28,12 @@ function Ingredient({ ingr }) {
 
   return (
     <>
-      <li onClick={openModalIngrHandle} className={cls.ingrCard}>
+      <li
+        ref={dragRef}
+        style={{ opacity: isDragging ? 0.5 : 1 }}
+        onClick={openModalIngrHandle}
+        className={cls.ingrCard}
+      >
         <img className="ml-4 mr-4" alt={ingr.name} src={ingr.image} />
         <p className={cls.price}>
           {ingr.price} <CurrencyIcon type="primary" />

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import {
   ConstructorElement,
   Button,
@@ -10,15 +10,41 @@ import Modal from "../Modal/Modal";
 import OrderDetails from "../OrderDetails/OrderDetails";
 import Spiner from "../spiners/Spiner";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllIngredients } from "../../services/slices/BurgeringredientsSlice";
 import {
+  addIngredient,
+  reorderIngredients,
+  selectAllIngredients,
+} from "../../services/slices/BurgerConstructorSlice";
+import {
+  getOrderError,
   getOrderStatus,
   selectOrderDetails,
   sendIngredients,
-  getOrderError,
 } from "../../services/slices/BurgerOrderSlice";
+import { useDrop } from "react-dnd";
 
 function BurgerConstructor() {
+  ///////////////////////////////////////////////////////
+
+  const [{ isHover }, dropTarget] = useDrop({
+    accept: "ingredient",
+    collect: (monitor) => ({
+      isHover: monitor.isOver(),
+    }),
+    drop(itemId) {
+      onDropHandler(itemId);
+    },
+  });
+
+  //////////////////////////////////////////////////
+  //////////////////////////////////////////////////
+
+  const onDropHandler = (itemId) => {
+    dispatch(addIngredient(itemId));
+  };
+
+  ///////////////////////////////////////////////////////////
+
   const dispatch = useDispatch();
   const burgerIngredients = useSelector(selectAllIngredients);
 
@@ -28,7 +54,7 @@ function BurgerConstructor() {
 
   const [modalVisible, setModalVisible] = useState(false);
   useMemo(() => {
-    if (orderStatus === "succeeded") {
+    if (orderStatus !== "loading" && orderStatus !== "idle") {
       setModalVisible(true);
     }
   }, [orderStatus]);
@@ -59,8 +85,23 @@ function BurgerConstructor() {
     return bunPrice * 2 + ingrPrice;
   }, [burgerIngredients]);
 
+  /////////////////////////////////////////
+
+  const onMove = useCallback(
+    (dragIndex, hoverIndex) => {
+      const dragItem = dataBurgerInner[dragIndex];
+      const newDataBurgerInner = [...dataBurgerInner];
+      newDataBurgerInner.splice(dragIndex, 1);
+      newDataBurgerInner.splice(hoverIndex, 0, dragItem);
+
+      dispatch(reorderIngredients(newDataBurgerInner));
+    },
+    [dataBurgerInner, dispatch]
+  );
+  //////////////////////////////////////////////////////
+
   return (
-    <section className={cls.burgerConstructor}>
+    <section ref={dropTarget} className={cls.burgerConstructor}>
       <ConstructorElement
         type="top"
         isLocked={true}
@@ -70,10 +111,16 @@ function BurgerConstructor() {
       />
 
       <ul className={cls.listBurgerIngr}>
-        {dataBurgerInner.map((item) => {
+        {dataBurgerInner.length === 0 && (
+          <p>Перетащите сюда ингридиенты из левой секции</p>
+        )}
+        {dataBurgerInner.map((item, index) => {
           return (
             <BurgerInnerList
-              key={item._id}
+              index={index}
+              onMove={onMove}
+              key={item.id}
+              innerId={item.id}
               name={item.name}
               price={item.price}
               image={item.image}
@@ -107,7 +154,13 @@ function BurgerConstructor() {
       {orderStatus === "loading" && <Spiner />}
       {modalVisible && (
         <Modal setModalVisible={setModalVisible}>
-          <OrderDetails orderData={orderdetails} />
+          {orderError ? (
+            <h1 style={{ padding: 100 }}>
+              Что-то пошло не так! Вы уверены, что выбрали ингредиенты?
+            </h1>
+          ) : (
+            <OrderDetails orderData={orderdetails} />
+          )}
         </Modal>
       )}
     </section>

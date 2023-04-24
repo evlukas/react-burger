@@ -4,6 +4,7 @@ import cls from "./ListIngredients.module.css";
 import ingrType from '../../utils/ingrType';
 
 function ListIngredients({ nameIngredient, listIngr, listRef }) {
+
   return (
     <>
       <h2 ref={listRef} className={cls.header}>{nameIngredient}</h2>

@@ -10,6 +10,7 @@ import {
 } from "../../services/slices/BurgeringredientsSlice";
 
 function BurgerIngredients() {
+
   const dispatch = useDispatch();
   const burgerIngredients = useSelector(selectAllIngredients);
 
