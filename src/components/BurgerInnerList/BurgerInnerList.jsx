@@ -18,6 +18,7 @@ function BurgerInnerList({ name, price, image, innerId, onMove, index }) {
     index,
   };
 
+  //drag, drop для сортировки ингредиентов в конструкторе
   const [{ isDrag }, drag] = useDrag({
     type: "innerIngr",
     item: item,

@@ -1,13 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    ingredientData: [],
+    ingredientData: {},
   };
 
 export const BurgerIngredientDetailsSlice = createSlice({
     name: 'ingredientdetails',
     initialState,
-    reducers: {}
+    reducers: {
+      getVisibleIngredient(state, action) {
+        state.ingredientData = action.payload;
+      },
+    }
 })
 
+export const { getVisibleIngredient } = BurgerIngredientDetailsSlice.actions;
 export default BurgerIngredientDetailsSlice.reducer;

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   CurrencyIcon,
   Counter,
@@ -8,8 +9,12 @@ import PropTypes from "prop-types";
 import Modal from "../Modal/Modal";
 import IngredientDetails from "../IngredientDetails/IngredientDetails";
 import { useDrag } from "react-dnd";
+import { getVisibleIngredient } from "../../services/slices/BurgerIngredientDetailsSlice";
 
 function Ingredient({ ingr }) {
+
+  const dispatch = useDispatch();
+
   const [{ isDragging }, dragRef] = useDrag({
     type: "ingredient",
     item: ingr,
@@ -20,6 +25,7 @@ function Ingredient({ ingr }) {
 
   const [modalVisible, setModalVisible] = useState(false);
   const openModalIngrHandle = () => {
+    dispatch(getVisibleIngredient(ingr))
     setModalVisible(true);
   };
 

@@ -30,13 +30,14 @@ function BurgerConstructor() {
     collect: (monitor) => ({
       isHover: monitor.isOver(),
     }),
-    drop(itemId) {
-      onDropHandler(itemId);
+    drop(dropIngr) {
+      onDropHandler(dropIngr);
     },
   });
 
-  const onDropHandler = (itemId) => {
-    dispatch(addIngredient(itemId));
+  const onDropHandler = (dropIngr) => {
+    const ingr = {...dropIngr, id: new Date().getTime() + '-' + Math.floor(Math.random() * 100000)}
+    dispatch(addIngredient(ingr));
   };
 
   const dispatch = useDispatch();
@@ -54,12 +55,12 @@ function BurgerConstructor() {
   }, [orderStatus]);
 
   const makeOrderBtnHandle = () => {
-    let ingredientsId = [
+    const ingredientIds = [
       bun._id,
       ...dataBurgerInner.map((item) => item._id),
       bun._id,
     ];
-    dispatch(sendIngredients(ingredientsId));
+    dispatch(sendIngredients(ingredientIds));
   };
 
   const { bun, dataBurgerInner } = useMemo(() => {
