@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import {
   ConstructorElement,
   Button,
@@ -22,9 +22,16 @@ import {
   sendIngredients,
 } from "../../services/slices/BurgerOrderSlice";
 import { useDrop } from "react-dnd";
-import { incrementItem } from "../../services/slices/BurgeringredientsSlice";
+import {
+  getLoadingIngredientsStatus,
+  incrementItem,
+} from "../../services/slices/BurgeringredientsSlice";
 
 function BurgerConstructor() {
+  const orderdetails = useSelector(selectOrderDetails);
+  const orderStatus = useSelector(getOrderStatus);
+  const ingrLoadingStatus = useSelector(getLoadingIngredientsStatus);
+  const orderError = useSelector(getOrderError);
 
   const [{ isHover }, dropTarget] = useDrop({
     accept: "ingredient",
@@ -37,7 +44,10 @@ function BurgerConstructor() {
   });
 
   const onDropHandler = (dropIngr) => {
-    const ingr = {...dropIngr, id: new Date().getTime() + '-' + Math.floor(Math.random() * 100000)}
+    const ingr = {
+      ...dropIngr,
+      id: new Date().getTime() + "-" + Math.floor(Math.random() * 100000),
+    };
     dispatch(incrementItem(ingr._id));
     dispatch(addIngredient(ingr));
   };
@@ -45,9 +55,16 @@ function BurgerConstructor() {
   const dispatch = useDispatch();
   const burgerIngredients = useSelector(selectAllIngredients);
 
-  const orderdetails = useSelector(selectOrderDetails);
-  const orderStatus = useSelector(getOrderStatus);
-  const orderError = useSelector(getOrderError);
+  const { bun, dataBurgerInner } = useMemo(() => {
+    return {
+      bun: burgerIngredients.find((item) => item.type === "bun"),
+      dataBurgerInner: burgerIngredients.filter((item) => item.type !== "bun"),
+    };
+  }, [burgerIngredients]);
+
+  useEffect(() => {
+    if(ingrLoadingStatus === "succeeded") {onDropHandler(bun)}
+  }, [ingrLoadingStatus])
 
   const [modalVisible, setModalVisible] = useState(false);
   useMemo(() => {
@@ -64,13 +81,6 @@ function BurgerConstructor() {
     ];
     dispatch(sendIngredients(ingredientIds));
   };
-
-  const { bun, dataBurgerInner } = useMemo(() => {
-    return {
-      bun: burgerIngredients.find((item) => item.type === "bun"),
-      dataBurgerInner: burgerIngredients.filter((item) => item.type !== "bun"),
-    };
-  }, [burgerIngredients]);
 
   const bunPrice = bun?.price || 0;
 

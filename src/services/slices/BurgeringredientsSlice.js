@@ -58,5 +58,6 @@ export const BurgeringredientsSlice = createSlice({
 });
 
 export const { incrementItem, decrementItem } = BurgeringredientsSlice.actions;
+export const getLoadingIngredientsStatus = (state) => state.ingredients.status;
 export const selectAllIngredients = (state) => state.ingredients.productData;
 export default BurgeringredientsSlice.reducer;
