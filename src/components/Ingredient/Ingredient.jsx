@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   CurrencyIcon,
   Counter,
@@ -14,6 +14,7 @@ import { getVisibleIngredient } from "../../services/slices/BurgerIngredientDeta
 function Ingredient({ ingr }) {
 
   const dispatch = useDispatch();
+
 
   const [{ isDragging }, dragRef] = useDrag({
     type: "ingredient",
@@ -42,7 +43,7 @@ function Ingredient({ ingr }) {
           {ingr.price} <CurrencyIcon type="primary" />
         </p>
         <p className={cls.name}>{ingr.name}</p>
-        <Counter count={1} size="default" extraClass="m-1" />
+        <Counter count={ingr.__v} size="default" extraClass="m-1" />
       </li>
       {modalVisible && (
         <Modal setModalVisible={setModalVisible}>

@@ -22,6 +22,7 @@ import {
   sendIngredients,
 } from "../../services/slices/BurgerOrderSlice";
 import { useDrop } from "react-dnd";
+import { incrementItem } from "../../services/slices/BurgeringredientsSlice";
 
 function BurgerConstructor() {
 
@@ -37,6 +38,7 @@ function BurgerConstructor() {
 
   const onDropHandler = (dropIngr) => {
     const ingr = {...dropIngr, id: new Date().getTime() + '-' + Math.floor(Math.random() * 100000)}
+    dispatch(incrementItem(ingr._id));
     dispatch(addIngredient(ingr));
   };
 
@@ -113,6 +115,7 @@ function BurgerConstructor() {
               onMove={onMove}
               key={item.id}
               innerId={item.id}
+              ingrId={item._id}
               name={item.name}
               price={item.price}
               image={item.image}

@@ -8,8 +8,9 @@ import cls from "./BurgerInnerList.module.css";
 import { useDispatch } from "react-redux";
 import { removeIngredient } from "../../services/slices/BurgerConstructorSlice";
 import { useDrag, useDrop } from "react-dnd";
+import { decrementItem } from "../../services/slices/BurgeringredientsSlice";
 
-function BurgerInnerList({ name, price, image, innerId, onMove, index }) {
+function BurgerInnerList({ name, price, image, innerId, onMove, index, ingrId }) {
   const dispatch = useDispatch();
   const ref = useRef(null);
 
@@ -42,6 +43,11 @@ function BurgerInnerList({ name, price, image, innerId, onMove, index }) {
 
   drag(drop(ref));
 
+  const removeItem = (innerId) => {
+    dispatch(removeIngredient(innerId));
+    dispatch(decrementItem(ingrId));
+  }
+ 
   return (
     <li ref={ref} className={cls.wrapDrag}>
       <DragIcon type="primary" />
@@ -49,7 +55,7 @@ function BurgerInnerList({ name, price, image, innerId, onMove, index }) {
         text={name}
         price={price}
         thumbnail={image}
-        handleClose={() => dispatch(removeIngredient(innerId))}
+        handleClose={() => removeItem(innerId)}
       />
     </li>
   );

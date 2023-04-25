@@ -19,7 +19,6 @@ const data = [
 
 const initialState = {
   innerIngedient: data,
-  ingredientCounter: 2,
 };
 
 export const BurgerConstructorSlice = createSlice({
@@ -35,7 +34,6 @@ export const BurgerConstructorSlice = createSlice({
         );
       } else {
         state.innerIngedient.push(newIngredient);
-        state.ingredientCounter += 1;
       }
     },
     removeIngredient(state, action) {
@@ -43,7 +41,6 @@ export const BurgerConstructorSlice = createSlice({
       state.innerIngedient = state.innerIngedient.filter(
         (ing) => ing.id !== id
       );
-      state.ingredientCounter -= 1;
     },
     reorderIngredients(state, action) {
       const bun = state.innerIngedient.find((ingr) => ingr.type === "bun");
