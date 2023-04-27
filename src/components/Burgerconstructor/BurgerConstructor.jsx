@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import {
   ConstructorElement,
   Button,
@@ -14,6 +14,7 @@ import {
   addIngredient,
   reorderIngredients,
   selectAllIngredients,
+  selectBun,
 } from "../../services/slices/BurgerConstructorSlice";
 import {
   getOrderError,
@@ -26,12 +27,15 @@ import {
   getLoadingIngredientsStatus,
   incrementItem,
 } from "../../services/slices/BurgeringredientsSlice";
+import ScrollToBottom from "../ScrollToBottom/ScrollToBottom";
 
 function BurgerConstructor() {
   const orderdetails = useSelector(selectOrderDetails);
   const orderStatus = useSelector(getOrderStatus);
   const ingrLoadingStatus = useSelector(getLoadingIngredientsStatus);
   const orderError = useSelector(getOrderError);
+  const dispatch = useDispatch();
+  const scrollRef = useRef();
 
   const [{ isHover }, dropTarget] = useDrop({
     accept: "ingredient",
@@ -52,19 +56,14 @@ function BurgerConstructor() {
     dispatch(addIngredient(ingr));
   };
 
-  const dispatch = useDispatch();
-  const burgerIngredients = useSelector(selectAllIngredients);
-
-  const { bun, dataBurgerInner } = useMemo(() => {
-    return {
-      bun: burgerIngredients.find((item) => item.type === "bun"),
-      dataBurgerInner: burgerIngredients.filter((item) => item.type !== "bun"),
-    };
-  }, [burgerIngredients]);
+  const dataBurgerInner = useSelector(selectAllIngredients);
+  const bun = useSelector(selectBun);
 
   useEffect(() => {
-    if(ingrLoadingStatus === "succeeded") {onDropHandler(bun)}
-  }, [ingrLoadingStatus])
+    if (ingrLoadingStatus === "succeeded") {
+      onDropHandler(bun);
+    }
+  }, [ingrLoadingStatus]);
 
   const [modalVisible, setModalVisible] = useState(false);
   useMemo(() => {
@@ -90,7 +89,7 @@ function BurgerConstructor() {
       0
     );
     return bunPrice * 2 + ingrPrice;
-  }, [burgerIngredients]);
+  }, [dataBurgerInner, bun]);
 
   const onMove = useCallback(
     (dragIndex, hoverIndex) => {
@@ -105,70 +104,75 @@ function BurgerConstructor() {
   );
 
   return (
-    <section ref={dropTarget} className={cls.burgerConstructor}>
-      <ConstructorElement
-        type="top"
-        isLocked={true}
-        text={`${bun?.name} (верх)`}
-        price={bunPrice}
-        thumbnail={bun?.image_mobile}
-      />
+    <>
+      <section ref={dropTarget} className={cls.burgerConstructor}>
+        <ConstructorElement
+          type="top"
+          isLocked={true}
+          text={`${bun?.name} (верх)`}
+          price={bunPrice}
+          thumbnail={bun?.image_mobile}
+        />
 
-      <ul className={cls.listBurgerIngr}>
-        {dataBurgerInner.length === 0 && (
-          <p>Перетащите сюда ингредиенты из левой секции</p>
-        )}
-        {dataBurgerInner.map((item, index) => {
-          return (
-            <BurgerInnerList
-              index={index}
-              onMove={onMove}
-              key={item.id}
-              innerId={item.id}
-              ingrId={item._id}
-              name={item.name}
-              price={item.price}
-              image={item.image}
-            />
-          );
-        })}
-      </ul>
-
-      <ConstructorElement
-        type="bottom"
-        isLocked={true}
-        text={`${bun?.name} (низ)`}
-        price={bunPrice}
-        thumbnail={bun?.image_mobile}
-      />
-      <div className={cls.placeOrderWrap}>
-        <Button
-          onClick={makeOrderBtnHandle}
-          htmlType="button"
-          type="primary"
-          size="large"
-        >
-          Оформить заказ
-        </Button>
-        <div className={cls.totalPriceWrap}>
-          <span className={cls.totalPrice}>{totalPrice}</span>
-          <CurrencyIcon type="primary" />
-        </div>
-      </div>
-
-      {orderStatus === "loading" && <Spiner />}
-      {modalVisible && (
-        <Modal setModalVisible={setModalVisible}>
-          {orderError || burgerIngredients.length === 1 ? (
-            <h1 style={{ padding: 100 }}>
-              Что-то пошло не так! Вы уверены, что выбрали ингредиенты?
-            </h1>
-          ) : (
-            <OrderDetails orderData={orderdetails} />
+        <ul ref={scrollRef} className={cls.listBurgerIngr}>
+          {dataBurgerInner.length === 0 && (
+            <p>Перетащите сюда ингредиенты из левой секции</p>
           )}
-        </Modal>
-      )}
-    </section>
+          {dataBurgerInner.map((item, index) => {
+            return (
+              <BurgerInnerList
+                index={index}
+                onMove={onMove}
+                key={item.id}
+                innerId={item.id}
+                ingrId={item._id}
+                name={item.name}
+                price={item.price}
+                image={item.image}
+              />
+            );
+          })}
+        </ul>
+
+        <ConstructorElement
+          type="bottom"
+          isLocked={true}
+          text={`${bun?.name} (низ)`}
+          price={bunPrice}
+          thumbnail={bun?.image_mobile}
+        />
+        <div className={cls.placeOrderWrap}>
+          <Button
+            onClick={makeOrderBtnHandle}
+            htmlType="button"
+            type="primary"
+            size="large"
+          >
+            Оформить заказ
+          </Button>
+          <div className={cls.totalPriceWrap}>
+            <span className={cls.totalPrice}>{totalPrice}</span>
+            <CurrencyIcon type="primary" />
+          </div>
+        </div>
+
+        {orderStatus === "loading" && <Spiner />}
+        {modalVisible && (
+          <Modal setModalVisible={setModalVisible}>
+            {orderError || dataBurgerInner.length === 1 ? (
+              <h1 style={{ padding: 100 }}>
+                Что-то пошло не так! Вы уверены, что выбрали ингредиенты?
+              </h1>
+            ) : (
+              <OrderDetails orderData={orderdetails} />
+            )}
+          </Modal>
+        )}
+
+        
+      </section>
+      <ScrollToBottom containerRef={scrollRef} />
+    </>
   );
 }
 

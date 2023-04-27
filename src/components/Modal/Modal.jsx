@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import ReactDOM from "react-dom";
+import { createPortal } from 'react-dom';
 import PropTypes from "prop-types";
 import cls from "./Modal.module.css";
 import ModalOverlay from "../ModalOverlay/ModalOverlay";
@@ -36,7 +36,7 @@ function Modal({ children, setModalVisible }) {
       </div>
     </div>
   );
-  return ReactDOM.createPortal(modal, modalApp);
+  return createPortal(modal, modalApp);
 }
 
 Modal.propsTypes = {
