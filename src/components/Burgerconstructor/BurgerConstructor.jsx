@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useContext } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import {
   ConstructorElement,
   Button,
@@ -8,41 +8,52 @@ import cls from "./BurgerConstructor.module.css";
 import BurgerInnerList from "../BurgerInnerList/BurgerInnerList";
 import Modal from "../Modal/Modal";
 import OrderDetails from "../OrderDetails/OrderDetails";
-import { IngredientsContext } from "../../services/burgerContext";
 import Spiner from "../spiners/Spiner";
-import { api } from "../../api/api";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addIngredient,
+  reorderIngredients,
+  selectAllIngredients,
+} from "../../services/slices/BurgerConstructorSlice";
+import {
+  getOrderError,
+  getOrderStatus,
+  selectOrderDetails,
+  sendIngredients,
+} from "../../services/slices/BurgerOrderSlice";
+import { useDrop } from "react-dnd";
+import {
+  getLoadingIngredientsStatus,
+  incrementItem,
+} from "../../services/slices/BurgeringredientsSlice";
 
 function BurgerConstructor() {
-  const burgerIngredients = useContext(IngredientsContext);
+  const orderdetails = useSelector(selectOrderDetails);
+  const orderStatus = useSelector(getOrderStatus);
+  const ingrLoadingStatus = useSelector(getLoadingIngredientsStatus);
+  const orderError = useSelector(getOrderError);
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const [orderdetails, setOrderdetails] = useState({
-    orderData: {},
-    loading: false,
-    error: "",
+  const [{ isHover }, dropTarget] = useDrop({
+    accept: "ingredient",
+    collect: (monitor) => ({
+      isHover: monitor.isOver(),
+    }),
+    drop(dropIngr) {
+      onDropHandler(dropIngr);
+    },
   });
 
-  const makeOrderBtnHandle = () => {
-    let ingredientsId = [bun._id, ...dataBurgerInner.map((item) => item._id), bun._id];
-    setOrderdetails((prevState) => ({ ...prevState, loading: true }));
-    api
-      .createOrder(ingredientsId)
-      .then((data) => {
-        setOrderdetails((prevState) => ({
-          ...prevState,
-          loading: false,
-          orderData: data,
-        }));
-        setModalVisible(true);
-      })
-      .catch(
-        (error) => setOrderdetails((prevState) => ({
-          ...prevState,
-          loading: false,
-          error: error,
-        }))
-      );
+  const onDropHandler = (dropIngr) => {
+    const ingr = {
+      ...dropIngr,
+      id: new Date().getTime() + "-" + Math.floor(Math.random() * 100000),
+    };
+    dispatch(incrementItem(ingr._id));
+    dispatch(addIngredient(ingr));
   };
+
+  const dispatch = useDispatch();
+  const burgerIngredients = useSelector(selectAllIngredients);
 
   const { bun, dataBurgerInner } = useMemo(() => {
     return {
@@ -50,6 +61,26 @@ function BurgerConstructor() {
       dataBurgerInner: burgerIngredients.filter((item) => item.type !== "bun"),
     };
   }, [burgerIngredients]);
+
+  useEffect(() => {
+    if(ingrLoadingStatus === "succeeded") {onDropHandler(bun)}
+  }, [ingrLoadingStatus])
+
+  const [modalVisible, setModalVisible] = useState(false);
+  useMemo(() => {
+    if (orderStatus !== "loading" && orderStatus !== "idle") {
+      setModalVisible(true);
+    }
+  }, [orderStatus]);
+
+  const makeOrderBtnHandle = () => {
+    const ingredientIds = [
+      bun._id,
+      ...dataBurgerInner.map((item) => item._id),
+      bun._id,
+    ];
+    dispatch(sendIngredients(ingredientIds));
+  };
 
   const bunPrice = bun?.price || 0;
 
@@ -61,8 +92,20 @@ function BurgerConstructor() {
     return bunPrice * 2 + ingrPrice;
   }, [burgerIngredients]);
 
+  const onMove = useCallback(
+    (dragIndex, hoverIndex) => {
+      const dragItem = dataBurgerInner[dragIndex];
+      const newDataBurgerInner = [...dataBurgerInner];
+      newDataBurgerInner.splice(dragIndex, 1);
+      newDataBurgerInner.splice(hoverIndex, 0, dragItem);
+
+      dispatch(reorderIngredients(newDataBurgerInner));
+    },
+    [dataBurgerInner, dispatch]
+  );
+
   return (
-    <section className={cls.burgerConstructor}>
+    <section ref={dropTarget} className={cls.burgerConstructor}>
       <ConstructorElement
         type="top"
         isLocked={true}
@@ -72,10 +115,17 @@ function BurgerConstructor() {
       />
 
       <ul className={cls.listBurgerIngr}>
-        {dataBurgerInner.map((item) => {
+        {dataBurgerInner.length === 0 && (
+          <p>Перетащите сюда ингредиенты из левой секции</p>
+        )}
+        {dataBurgerInner.map((item, index) => {
           return (
             <BurgerInnerList
-              key={item._id}
+              index={index}
+              onMove={onMove}
+              key={item.id}
+              innerId={item.id}
+              ingrId={item._id}
               name={item.name}
               price={item.price}
               image={item.image}
@@ -105,10 +155,17 @@ function BurgerConstructor() {
           <CurrencyIcon type="primary" />
         </div>
       </div>
-      {orderdetails.loading && <Spiner />}
+
+      {orderStatus === "loading" && <Spiner />}
       {modalVisible && (
         <Modal setModalVisible={setModalVisible}>
-          <OrderDetails orderData={orderdetails.orderData} />
+          {orderError || burgerIngredients.length === 1 ? (
+            <h1 style={{ padding: 100 }}>
+              Что-то пошло не так! Вы уверены, что выбрали ингредиенты?
+            </h1>
+          ) : (
+            <OrderDetails orderData={orderdetails} />
+          )}
         </Modal>
       )}
     </section>
