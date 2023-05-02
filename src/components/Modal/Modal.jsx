@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import cls from "./Modal.module.css";
 import ModalOverlay from "../ModalOverlay/ModalOverlay";
 
-function Modal({ children, setModalVisible }) {
+function Modal({ children, setIsModalOpen }) {
   const modalApp = document.getElementById("react-modals");
 
   const closeEscapeHandle = (event) => {
@@ -19,7 +19,7 @@ function Modal({ children, setModalVisible }) {
   }, []);
 
   const closeModalHandler = () => {
-    setModalVisible(false);
+    setIsModalOpen(false);
   };
 
   const modal = (

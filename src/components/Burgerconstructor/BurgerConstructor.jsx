@@ -1,9 +1,11 @@
-import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
-import {
-  ConstructorElement,
-  Button,
-  CurrencyIcon,
-} from "@ya.praktikum/react-developer-burger-ui-components";
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
+import { ConstructorElement } from "@ya.praktikum/react-developer-burger-ui-components";
 import cls from "./BurgerConstructor.module.css";
 import BurgerInnerList from "../BurgerInnerList/BurgerInnerList";
 import Modal from "../Modal/Modal";
@@ -28,16 +30,17 @@ import {
   incrementItem,
 } from "../../services/slices/BurgeringredientsSlice";
 import ScrollToBottom from "../ScrollToBottom/ScrollToBottom";
+import OrderButton from "../OrderButton/OrderButton";
+import { OrderTotal } from "../OrderTotal/OrderTotal";
 
 function BurgerConstructor() {
-  const orderdetails = useSelector(selectOrderDetails);
   const orderStatus = useSelector(getOrderStatus);
   const ingrLoadingStatus = useSelector(getLoadingIngredientsStatus);
   const orderError = useSelector(getOrderError);
   const dispatch = useDispatch();
   const scrollRef = useRef();
 
-  const [{ isHover }, dropTarget] = useDrop({
+  const [, dropTarget] = useDrop({
     accept: "ingredient",
     collect: (monitor) => ({
       isHover: monitor.isOver(),
@@ -65,11 +68,8 @@ function BurgerConstructor() {
     }
   }, [ingrLoadingStatus]);
 
-  const [modalVisible, setModalVisible] = useState(false);
-  useMemo(() => {
-    if (orderStatus !== "loading" && orderStatus !== "idle") {
-      setModalVisible(true);
-    }
+  useEffect(() => {
+    console.log(orderStatus)
   }, [orderStatus]);
 
   const makeOrderBtnHandle = () => {
@@ -142,34 +142,9 @@ function BurgerConstructor() {
           thumbnail={bun?.image_mobile}
         />
         <div className={cls.placeOrderWrap}>
-          <Button
-            onClick={makeOrderBtnHandle}
-            htmlType="button"
-            type="primary"
-            size="large"
-          >
-            Оформить заказ
-          </Button>
-          <div className={cls.totalPriceWrap}>
-            <span className={cls.totalPrice}>{totalPrice}</span>
-            <CurrencyIcon type="primary" />
-          </div>
+          <OrderButton onClick={makeOrderBtnHandle} status={}/>
+          <OrderTotal price={totalPrice} />
         </div>
-
-        {orderStatus === "loading" && <Spiner />}
-        {modalVisible && (
-          <Modal setModalVisible={setModalVisible}>
-            {orderError || dataBurgerInner.length === 1 ? (
-              <h1 style={{ padding: 100 }}>
-                Что-то пошло не так! Вы уверены, что выбрали ингредиенты?
-              </h1>
-            ) : (
-              <OrderDetails orderData={orderdetails} />
-            )}
-          </Modal>
-        )}
-
-        
       </section>
       <ScrollToBottom containerRef={scrollRef} />
     </>

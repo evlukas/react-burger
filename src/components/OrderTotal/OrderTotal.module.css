@@ -1,0 +1,13 @@
+.totalPrice {
+    composes: mr-2 text text_type_digits-medium from global;
+ }
+ 
+ .totalPriceWrap {
+    display: flex;
+    composes: mr-10 from global;
+ }
+ 
+ .totalPriceWrap svg {
+    width: 32px;
+    height: 35px;
+ }
