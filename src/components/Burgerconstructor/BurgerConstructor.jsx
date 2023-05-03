@@ -8,9 +8,6 @@ import React, {
 import { ConstructorElement } from "@ya.praktikum/react-developer-burger-ui-components";
 import cls from "./BurgerConstructor.module.css";
 import BurgerInnerList from "../BurgerInnerList/BurgerInnerList";
-import Modal from "../Modal/Modal";
-import OrderDetails from "../OrderDetails/OrderDetails";
-import Spiner from "../spiners/Spiner";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addIngredient,
@@ -18,12 +15,7 @@ import {
   selectAllIngredients,
   selectBun,
 } from "../../services/slices/BurgerConstructorSlice";
-import {
-  getOrderError,
-  getOrderStatus,
-  selectOrderDetails,
-  sendIngredients,
-} from "../../services/slices/BurgerOrderSlice";
+
 import { useDrop } from "react-dnd";
 import {
   getLoadingIngredientsStatus,
@@ -34,9 +26,7 @@ import OrderButton from "../OrderButton/OrderButton";
 import { OrderTotal } from "../OrderTotal/OrderTotal";
 
 function BurgerConstructor() {
-  const orderStatus = useSelector(getOrderStatus);
   const ingrLoadingStatus = useSelector(getLoadingIngredientsStatus);
-  const orderError = useSelector(getOrderError);
   const dispatch = useDispatch();
   const scrollRef = useRef();
 
@@ -68,21 +58,7 @@ function BurgerConstructor() {
     }
   }, [ingrLoadingStatus]);
 
-  useEffect(() => {
-    console.log(orderStatus)
-  }, [orderStatus]);
-
-  const makeOrderBtnHandle = () => {
-    const ingredientIds = [
-      bun._id,
-      ...dataBurgerInner.map((item) => item._id),
-      bun._id,
-    ];
-    dispatch(sendIngredients(ingredientIds));
-  };
-
   const bunPrice = bun?.price || 0;
-
   const totalPrice = useMemo(() => {
     const ingrPrice = dataBurgerInner.reduce(
       (sum, currentIngr) => sum + currentIngr.price,
@@ -142,7 +118,7 @@ function BurgerConstructor() {
           thumbnail={bun?.image_mobile}
         />
         <div className={cls.placeOrderWrap}>
-          <OrderButton onClick={makeOrderBtnHandle} status={}/>
+          <OrderButton />
           <OrderTotal price={totalPrice} />
         </div>
       </section>
