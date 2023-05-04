@@ -1,0 +1,14 @@
+.content {
+    height: calc(100vh - 260px);
+    overflow-y: scroll; 
+    position: relative;
+}
+
+.content::-webkit-scrollbar {
+    width: 7px;
+    background-color: #131316;
+}
+
+.content::-webkit-scrollbar-thumb {
+    background-color: #8585AD;
+}

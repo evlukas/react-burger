@@ -1,0 +1,20 @@
+.listBurgerIngr {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 0;
+    margin: 0;
+    height: 425px;
+    overflow-y: scroll;
+    composes: pr-5 from global;
+ }
+ 
+ .listBurgerIngr::-webkit-scrollbar {
+    width: 7px;
+    background-color: #131316;
+ }
+ 
+ .listBurgerIngr::-webkit-scrollbar-thumb {
+    background-color: #8585AD;
+ }
